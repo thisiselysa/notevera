@@ -30,7 +30,7 @@ const LogoImage = styled.img`
 `;
 
 const Logo = styled.h1`
-  font-size: 26px;
+  font-size: 32px;
   margin: 0;
 `;
 
@@ -102,7 +102,7 @@ function Header({ onCreate }) {
         {/* LOGO */}
         <LogoWrapper>
           <LogoImage src={logo} alt="logo" />
-          <Logo>𝑵𝒐𝒕𝒆𝒗𝒆𝒓𝒂✧°</Logo>
+          <Logo>𝑵𝒐𝒕𝒆𝒗𝒆𝒓𝒂 𓇼✧°</Logo>
         </LogoWrapper>
 
         {/* BUTTONS */}

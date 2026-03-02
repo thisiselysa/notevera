@@ -1,14 +1,20 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 import Header from "../components/Header";
 import NoteList from "../components/NoteList";
 import NoteModal from "../components/NoteModal";
 
-import { getNotes, createNote, updateNote, deleteNote }
-  from "../services/api";
+import {
+  getNotes,
+  createNote,
+  updateNote,
+  deleteNote,
+} from "../services/api";
 
 import bgTop from "../assets/bg-top.jpg";
+
 /* ======================
    STYLED COMPONENTS
 ====================== */
@@ -23,8 +29,6 @@ const TopBackground = styled.div`
   margin-top: -60px;
   padding: 120px 0 80px 0;
 
-
-
   position: relative;
   z-index: 1;
 `;
@@ -36,22 +40,30 @@ const HeaderWrapper = styled.div`
 `;
 
 /* ======================
-   APP COMPONENT
+   HOME COMPONENT
 ====================== */
 
-function App() {
+function Home() {
+  const navigate = useNavigate();
+
   // STATE
   const [notes, setNotes] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedNote, setSelectedNote] = useState(null);
 
-  // FETCH
+  // ================= FETCH NOTES =================
   const fetchNotes = async () => {
     try {
       const data = await getNotes();
       setNotes(data);
     } catch (err) {
       console.error("Error fetching notes:", err);
+
+      // jika token invalid → logout otomatis
+      if (err.message === "Unauthorized") {
+        localStorage.removeItem("token");
+        navigate("/login");
+      }
     }
   };
 
@@ -59,19 +71,19 @@ function App() {
     fetchNotes();
   }, []);
 
-  // CREATE
+  // ================= CREATE =================
   const handleOpenCreate = () => {
     setSelectedNote(null);
     setIsModalOpen(true);
   };
 
-  // EDIT
+  // ================= EDIT =================
   const handleOpenEdit = (note) => {
     setSelectedNote(note);
     setIsModalOpen(true);
   };
 
-  // SAVE
+  // ================= SAVE =================
   const handleSave = async (data) => {
     try {
       if (selectedNote) {
@@ -88,7 +100,7 @@ function App() {
     }
   };
 
-  // DELETE
+  // ================= DELETE =================
   const handleDelete = async (id) => {
     try {
       await deleteNote(id);
@@ -98,33 +110,39 @@ function App() {
     }
   };
 
-  // RETURN
+  // ================= LOGOUT =================
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
+
+  // ================= RETURN =================
   return (
-  <>
-    {/* HEADER */}
-    <HeaderWrapper>
-      <Header onCreate={handleOpenCreate} />
-    </HeaderWrapper>
+    <>
+      {/* HEADER */}
+      <HeaderWrapper>
+        <Header onCreate={handleOpenCreate} onLogout={handleLogout} />
+      </HeaderWrapper>
 
-    {/* BACKGROUND + NOTES */}
-    <TopBackground>
-      <NoteList
-        notes={notes}
-        onEdit={handleOpenEdit}
-        onDelete={handleDelete}
-      />
-    </TopBackground>
+      {/* NOTES */}
+      <TopBackground>
+        <NoteList
+          notes={notes}
+          onEdit={handleOpenEdit}
+          onDelete={handleDelete}
+        />
+      </TopBackground>
 
-    {/* MODAL */}
-    {isModalOpen && (
-      <NoteModal
-        initialData={selectedNote}
-        onClose={() => setIsModalOpen(false)}
-        onSubmit={handleSave}
-      />
-    )}
-  </>
-);
+      {/* MODAL */}
+      {isModalOpen && (
+        <NoteModal
+          initialData={selectedNote}
+          onClose={() => setIsModalOpen(false)}
+          onSubmit={handleSave}
+        />
+      )}
+    </>
+  );
 }
 
-export default App;
+export default Home;
