@@ -1,7 +1,16 @@
 import styled from "styled-components";
+import { useNavigate, useLocation } from "react-router-dom";
+import logo from "../assets/logo.png";
+
+/* ======================
+   STYLES
+====================== */
 
 const Wrapper = styled.div`
-  padding: 40px 80px;
+  width: 100%;
+  padding: 20px 60px;
+  background: white;
+  box-sizing: border-box;
 `;
 
 const TopBar = styled.div`
@@ -10,41 +19,108 @@ const TopBar = styled.div`
   align-items: center;
 `;
 
-const Logo = styled.h1`
-  font-size: 42px;
-  font-weight: 700;
+const LogoWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
 `;
 
-const Button = styled.button`
-  background: linear-gradient(90deg, #ff4d8d, #ff6ec7);
+const LogoImage = styled.img`
+  width: 40px;
+`;
+
+const Logo = styled.h1`
+  font-size: 26px;
+  margin: 0;
+`;
+
+const RightSection = styled.div`
+  display: flex;
+  gap: 12px;
+`;
+
+/* BUTTON OTHER */
+
+const OtherButton = styled.button`
+  background: ${({ active }) => (active ? "#ff4d8d" : "#ffd6e7")};
+  color: ${({ active }) => (active ? "white" : "#ff4d8d")};
   border: none;
-  padding: 14px 28px;
+  padding: 12px 22px;
   border-radius: 30px;
-  color: white;
   font-weight: bold;
   cursor: pointer;
-  box-shadow: 0 10px 20px rgba(255, 0, 150, 0.3);
+  transition: 0.2s;
+
+  &:hover {
+    transform: translateY(-1px);
+  }
 `;
+
+/* BUTTON CREATE */
+
+const CreateButton = styled.button`
+  background: #ff4d8d;
+  color: white;
+  border: none;
+  padding: 12px 26px;
+  border-radius: 30px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(255, 77, 141, 0.4);
+
+  &:hover {
+    transform: translateY(-1px);
+  }
+`;
+
+/* SEARCH */
 
 const Search = styled.input`
-  margin-top: 25px;
   width: 100%;
-  padding: 18px;
-  border-radius: 20px;
+  margin-top: 20px;
+  padding: 16px 20px;
+  border-radius: 30px;
   border: none;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  background: #ffe6ef;
   font-size: 16px;
+  outline: none;
 `;
 
-// 🔥 TERIMA PROP onCreate
+/* ======================
+   COMPONENT
+====================== */
+
 function Header({ onCreate }) {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const isOtherPage = location.pathname === "/other";
+
   return (
     <Wrapper>
       <TopBar>
-        <Logo> 🌸Notevera𓇼 ˖°</Logo>
-        {/* 🔥 Hubungkan ke App */}
-        <Button onClick={onCreate}>+ New Insight</Button>
+        {/* LOGO */}
+        <LogoWrapper>
+          <LogoImage src={logo} alt="logo" />
+          <Logo>𝑵𝒐𝒕𝒆𝒗𝒆𝒓𝒂✧°</Logo>
+        </LogoWrapper>
+
+        {/* BUTTONS */}
+        <RightSection>
+          <OtherButton
+            active={isOtherPage}
+            onClick={() => navigate("/other")}
+          >
+            Other
+          </OtherButton>
+
+          <CreateButton onClick={onCreate}>
+            + New Insight
+          </CreateButton>
+        </RightSection>
       </TopBar>
+
+      {/* SEARCH */}
       <Search placeholder="Search your insights..." />
     </Wrapper>
   );
